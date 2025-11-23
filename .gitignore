@@ -31,3 +31,9 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# ignorar front referencial
+Front_Huerto_Hogar/
+
+#docs referenciales
+docs/
