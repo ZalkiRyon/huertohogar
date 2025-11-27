@@ -3,6 +3,7 @@ package com.backend.huertohogar.controller;
 import com.backend.huertohogar.dto.ProductoRequestDTO;
 import com.backend.huertohogar.dto.ProductoResponseDTO;
 import com.backend.huertohogar.service.ProductoService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,7 +40,7 @@ public class ProductoController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductoResponseDTO> createProducto(@RequestBody ProductoRequestDTO productoDTO) {
+    public ResponseEntity<ProductoResponseDTO> createProducto(@Valid @RequestBody ProductoRequestDTO productoDTO) {
         ProductoResponseDTO newProductoResponse = productoService.saveProducto(productoDTO);
         return new ResponseEntity<>(newProductoResponse, HttpStatus.CREATED);
         // code 201
@@ -47,7 +48,7 @@ public class ProductoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ProductoResponseDTO> updateProducto(@PathVariable Integer id,
-            @RequestBody ProductoRequestDTO productoDTO) {
+            @Valid @RequestBody ProductoRequestDTO productoDTO) {
         ProductoResponseDTO updatedProductoResponse = productoService.updateProducto(id, productoDTO);
         return new ResponseEntity<>(updatedProductoResponse, HttpStatus.OK);
         // code 200

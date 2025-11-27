@@ -4,6 +4,7 @@ import com.backend.huertohogar.dto.DetalleOrdenRequestDTO;
 import com.backend.huertohogar.dto.OrdenRequestDTO;
 import com.backend.huertohogar.dto.OrdenResponseDTO;
 import com.backend.huertohogar.exception.ResourceNotFoundException;
+import com.backend.huertohogar.exception.ValidationException;
 import com.backend.huertohogar.model.*;
 import com.backend.huertohogar.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,14 @@ public class OrdenServiceImpl implements OrdenService {
             Producto producto = productoRepository.findById(detalleDTO.getProductoId())
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "Producto no encontrado con ID: " + detalleDTO.getProductoId()));
+
+            if (producto.getStock() < detalleDTO.getCantidad()) {
+                throw new ValidationException("Stock insuficiente para el producto: " + producto.getNombre());
+            }
+
+            // Descontar stock
+            producto.setStock(producto.getStock() - detalleDTO.getCantidad());
+            productoRepository.save(producto);
 
             DetalleOrden detalle = new DetalleOrden();
             detalle.setOrden(orden);

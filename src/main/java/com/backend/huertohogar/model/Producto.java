@@ -29,7 +29,18 @@ public class Producto {
     @Column(length = 255)
     private String imagen;
 
+    @Column(nullable = false)
+    private Boolean activo = true;
+
     public Producto() {
+    }
+
+    public Boolean getActivo() {
+        return activo;
+    }
+
+    public void setActivo(Boolean activo) {
+        this.activo = activo;
     }
 
     public Integer getId() {
