@@ -10,9 +10,10 @@ public class DetalleOrdenResponseDTO {
     private Integer subtotal;
 
     public DetalleOrdenResponseDTO(DetalleOrden detalle) {
-        this.productoNombre = detalle.getProducto().getNombre();
+        // Use snapshot fields
+        this.productoNombre = detalle.getNombreProductoSnapshot();
+        this.precioUnitario = detalle.getPrecioUnitarioSnapshot();
         this.cantidad = detalle.getCantidad();
-        this.precioUnitario = detalle.getPrecioUnitario();
         this.subtotal = detalle.getSubtotal();
     }
 

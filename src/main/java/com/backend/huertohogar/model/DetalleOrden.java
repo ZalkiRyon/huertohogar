@@ -13,8 +13,12 @@ public class DetalleOrden {
     @Column(nullable = false)
     private Integer cantidad;
 
-    @Column(name = "precio_unitario", nullable = false)
-    private Integer precioUnitario;
+    // Snapshot fields
+    @Column(name = "nombre_producto_snapshot", nullable = false)
+    private String nombreProductoSnapshot;
+
+    @Column(name = "precio_unitario_snapshot", nullable = false)
+    private Integer precioUnitarioSnapshot;
 
     @Column(nullable = false)
     private Integer subtotal;
@@ -24,7 +28,7 @@ public class DetalleOrden {
     private Orden orden;
 
     @ManyToOne
-    @JoinColumn(name = "producto_id", nullable = false)
+    @JoinColumn(name = "producto_id")
     private Producto producto;
 
     public DetalleOrden() {
@@ -46,12 +50,20 @@ public class DetalleOrden {
         this.cantidad = cantidad;
     }
 
-    public Integer getPrecioUnitario() {
-        return precioUnitario;
+    public String getNombreProductoSnapshot() {
+        return nombreProductoSnapshot;
     }
 
-    public void setPrecioUnitario(Integer precioUnitario) {
-        this.precioUnitario = precioUnitario;
+    public void setNombreProductoSnapshot(String nombreProductoSnapshot) {
+        this.nombreProductoSnapshot = nombreProductoSnapshot;
+    }
+
+    public Integer getPrecioUnitarioSnapshot() {
+        return precioUnitarioSnapshot;
+    }
+
+    public void setPrecioUnitarioSnapshot(Integer precioUnitarioSnapshot) {
+        this.precioUnitarioSnapshot = precioUnitarioSnapshot;
     }
 
     public Integer getSubtotal() {

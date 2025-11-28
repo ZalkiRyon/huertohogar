@@ -22,79 +22,13 @@ import java.util.stream.Collectors;
 public class OrdenServiceImpl implements OrdenService {
 
     private final OrdenRepository ordenRepository;
-    private final UserRepository userRepository;
     private final ProductoRepository productoRepository;
-    private final EstadoRepository estadoRepository;
 
     @Autowired
     public OrdenServiceImpl(OrdenRepository ordenRepository,
-            UserRepository userRepository,
-            ProductoRepository productoRepository,
-            EstadoRepository estadoRepository) {
+            ProductoRepository productoRepository) {
         this.ordenRepository = ordenRepository;
-        this.userRepository = userRepository;
         this.productoRepository = productoRepository;
-        this.estadoRepository = estadoRepository;
-    }
-
-    @Override
-    @Transactional
-    public OrdenResponseDTO createOrden(OrdenRequestDTO ordenDTO) {
-        // 1. Validar Usuario
-        User usuario = userRepository.findById(ordenDTO.getClienteId())
-                .orElseThrow(() -> new ResourceNotFoundException(
-                        "Usuario no encontrado con ID: " + ordenDTO.getClienteId()));
-
-        // 2. Obtener Estado Inicial (Pendiente)
-        Estado estado = estadoRepository.findByNombre("Pendiente")
-                .orElseThrow(
-                        () -> new ResourceNotFoundException("Estado 'Pendiente' no encontrado en la base de datos"));
-
-        // 3. Crear Orden
-        Orden orden = new Orden();
-        orden.setUsuario(usuario);
-        orden.setEstado(estado);
-        orden.setFecha(LocalDate.now());
-        orden.setComentario(ordenDTO.getComentario());
-        orden.setNumeroOrden("ORD-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase());
-
-        // 4. Procesar Detalles y Calcular Total
-        List<DetalleOrden> detalles = new ArrayList<>();
-        int montoTotal = 0;
-
-        for (DetalleOrdenRequestDTO detalleDTO : ordenDTO.getDetalles()) {
-            Producto producto = productoRepository.findById(detalleDTO.getProductoId())
-                    .orElseThrow(() -> new ResourceNotFoundException(
-                            "Producto no encontrado con ID: " + detalleDTO.getProductoId()));
-
-            if (producto.getStock() < detalleDTO.getCantidad()) {
-                throw new ValidationException("Stock insuficiente para el producto: " + producto.getNombre());
-            }
-
-            // Descontar stock
-            producto.setStock(producto.getStock() - detalleDTO.getCantidad());
-            productoRepository.save(producto);
-
-            DetalleOrden detalle = new DetalleOrden();
-            detalle.setOrden(orden);
-            detalle.setProducto(producto);
-            detalle.setCantidad(detalleDTO.getCantidad());
-            detalle.setPrecioUnitario(producto.getPrecio());
-
-            int subtotal = producto.getPrecio() * detalleDTO.getCantidad();
-            detalle.setSubtotal(subtotal);
-
-            detalles.add(detalle);
-            montoTotal += subtotal;
-        }
-
-        orden.setDetalles(detalles);
-        orden.setMontoTotal(montoTotal);
-
-        // 5. Guardar Orden (Cascade guardará los detalles)
-        Orden savedOrden = ordenRepository.save(orden);
-
-        return new OrdenResponseDTO(savedOrden);
     }
 
     @Override
@@ -113,38 +47,17 @@ public class OrdenServiceImpl implements OrdenService {
 
     @Override
     @Transactional
-    public OrdenResponseDTO updateOrden(Integer id, OrdenRequestDTO ordenDTO) {
-        Orden orden = ordenRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Orden no encontrada con ID: " + id));
-
-        // Solo permitimos actualizar comentario por ahora, o estado si se pasara en el
-        // DTO (pero el DTO actual no tiene estado explícito para update simple)
-        // Si se quisiera actualizar estado, habría que recibirlo. Asumiremos que este
-        // endpoint es para correcciones menores o podríamos agregar lógica de estado.
-        // Dado el requerimiento de "PUT", actualizaremos lo que viene en el DTO.
-
-        if (ordenDTO.getComentario() != null) {
-            orden.setComentario(ordenDTO.getComentario());
-        }
-
-        // Nota: Actualizar detalles es complejo (recalcular stock, totales, etc).
-        // Para este MVP, limitaremos el PUT a datos básicos.
-
-        return new OrdenResponseDTO(ordenRepository.save(orden));
-    }
-
-    @Override
-    @Transactional
     public void deleteOrden(Integer id) {
         Orden orden = ordenRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Orden no encontrada con ID: " + id));
 
-        // Reponer stock antes de eliminar (opcional, pero recomendado para
-        // consistencia)
+        // Reponer stock antes de eliminar (solo si el producto aún existe)
         for (DetalleOrden detalle : orden.getDetalles()) {
             Producto producto = detalle.getProducto();
-            producto.setStock(producto.getStock() + detalle.getCantidad());
-            productoRepository.save(producto);
+            if (producto != null) {
+                producto.setStock(producto.getStock() + detalle.getCantidad());
+                productoRepository.save(producto);
+            }
         }
 
         ordenRepository.delete(orden);

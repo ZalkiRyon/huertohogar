@@ -21,14 +21,31 @@ public class Orden {
     @Column(name = "monto_total", nullable = false)
     private Integer montoTotal;
 
-    @Column(name = "departamento")
-    private String departamento;
-
     @Column(name = "comentario", columnDefinition = "TEXT")
     private String comentario;
 
+    // Snapshot fields
+    @Column(name = "nombre_cliente_snapshot", nullable = false)
+    private String nombreClienteSnapshot;
+
+    @Column(name = "email_cliente_snapshot", nullable = false)
+    private String emailClienteSnapshot;
+
+    // Dispatch fields
+    @Column(name = "direccion_envio", nullable = false)
+    private String direccionEnvio;
+
+    @Column(name = "region_envio", nullable = false)
+    private String regionEnvio;
+
+    @Column(name = "comuna_envio", nullable = false)
+    private String comunaEnvio;
+
+    @Column(name = "telefono_contacto")
+    private String telefonoContacto;
+
     @ManyToOne
-    @JoinColumn(name = "cliente_id", nullable = false)
+    @JoinColumn(name = "cliente_id")
     private User usuario;
 
     @ManyToOne
@@ -73,20 +90,60 @@ public class Orden {
         this.montoTotal = montoTotal;
     }
 
-    public String getDepartamento() {
-        return departamento;
-    }
-
-    public void setDepartamento(String departamento) {
-        this.departamento = departamento;
-    }
-
     public String getComentario() {
         return comentario;
     }
 
     public void setComentario(String comentario) {
         this.comentario = comentario;
+    }
+
+    public String getNombreClienteSnapshot() {
+        return nombreClienteSnapshot;
+    }
+
+    public void setNombreClienteSnapshot(String nombreClienteSnapshot) {
+        this.nombreClienteSnapshot = nombreClienteSnapshot;
+    }
+
+    public String getEmailClienteSnapshot() {
+        return emailClienteSnapshot;
+    }
+
+    public void setEmailClienteSnapshot(String emailClienteSnapshot) {
+        this.emailClienteSnapshot = emailClienteSnapshot;
+    }
+
+    public String getDireccionEnvio() {
+        return direccionEnvio;
+    }
+
+    public void setDireccionEnvio(String direccionEnvio) {
+        this.direccionEnvio = direccionEnvio;
+    }
+
+    public String getRegionEnvio() {
+        return regionEnvio;
+    }
+
+    public void setRegionEnvio(String regionEnvio) {
+        this.regionEnvio = regionEnvio;
+    }
+
+    public String getComunaEnvio() {
+        return comunaEnvio;
+    }
+
+    public void setComunaEnvio(String comunaEnvio) {
+        this.comunaEnvio = comunaEnvio;
+    }
+
+    public String getTelefonoContacto() {
+        return telefonoContacto;
+    }
+
+    public void setTelefonoContacto(String telefonoContacto) {
+        this.telefonoContacto = telefonoContacto;
     }
 
     public User getUsuario() {
