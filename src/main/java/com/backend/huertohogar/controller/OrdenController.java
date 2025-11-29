@@ -36,6 +36,19 @@ public class OrdenController {
                 .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @PostMapping
+    public ResponseEntity<OrdenResponseDTO> createOrden(@Valid @RequestBody OrdenRequestDTO ordenDTO) {
+        OrdenResponseDTO newOrden = ordenService.createOrden(ordenDTO);
+        return new ResponseEntity<>(newOrden, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<OrdenResponseDTO> updateOrden(@PathVariable Integer id,
+            @Valid @RequestBody OrdenRequestDTO ordenDTO) {
+        OrdenResponseDTO updatedOrden = ordenService.updateOrden(id, ordenDTO);
+        return new ResponseEntity<>(updatedOrden, HttpStatus.OK);
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrden(@PathVariable Integer id) {
         ordenService.deleteOrden(id);

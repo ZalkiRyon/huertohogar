@@ -10,5 +10,9 @@ public interface OrdenService {
 
     Optional<OrdenResponseDTO> getOrdenById(Integer id);
 
+    OrdenResponseDTO createOrden(OrdenRequestDTO ordenDTO);
+
+    OrdenResponseDTO updateOrden(Integer id, OrdenRequestDTO ordenDTO);
+
     void deleteOrden(Integer id);
 }

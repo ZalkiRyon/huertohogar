@@ -12,6 +12,7 @@ public class OrdenResponseDTO {
     private LocalDate fecha;
     private String estado;
     private Integer montoTotal;
+    private Integer costoEnvio;
     private String comentario;
 
     // Snapshot fields
@@ -30,6 +31,7 @@ public class OrdenResponseDTO {
         this.fecha = orden.getFecha();
         this.estado = orden.getEstado().getNombre();
         this.montoTotal = orden.getMontoTotal();
+        this.costoEnvio = orden.getCostoEnvio();
         this.comentario = orden.getComentario();
 
         // Map snapshot fields
@@ -83,6 +85,14 @@ public class OrdenResponseDTO {
 
     public void setMontoTotal(Integer montoTotal) {
         this.montoTotal = montoTotal;
+    }
+
+    public Integer getCostoEnvio() {
+        return costoEnvio;
+    }
+
+    public void setCostoEnvio(Integer costoEnvio) {
+        this.costoEnvio = costoEnvio;
     }
 
     public String getComentario() {

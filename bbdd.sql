@@ -108,6 +108,7 @@ CREATE TABLE `ordenes` (
   `fecha` date DEFAULT NULL,
   `estado_id` int(11) NOT NULL,
   `monto_total` int(11) NOT NULL DEFAULT 0,
+  `costo_envio` int(11) NOT NULL DEFAULT 0,
   `comentario` text,
   
   PRIMARY KEY (`id`),
@@ -197,27 +198,27 @@ INSERT INTO `productos` (`id`, `nombre`, `categoria_id`, `precio`, `stock`, `des
 
 -- Insertar Órdenes (CORREGIDO CON SNAPSHOTS Y CAMPOS DE DESPACHO)
 -- Nota: Se han extraído los datos de los usuarios correspondientes para llenar los snapshots.
-INSERT INTO `ordenes` (id, numero_orden, cliente_id, nombre_cliente_snapshot, email_cliente_snapshot, direccion_envio, region_envio, comuna_envio, telefono_contacto, fecha, estado_id, monto_total, comentario) VALUES
-(1, 'SO1001', 4, 'Ana María Martínez López', 'ana.martinez@duocuc.cl', 'Av. Apoquindo 4567, Casa 78', 'region-metropolitana', 'las-condes', '945678912', '2024-06-01', 1, 21300, ''),
-(2, 'SO1002', 5, 'Pedro Antonio Ramírez Castro', 'pedro.ramirez@duocuc.cl', 'Calle San Martín 1234, Villa El Sauce', 'region-ohiggins', 'rancagua', '934567891', '2024-06-02', 2, 14500, ''),
-(3, 'SO1003', 6, 'Lucía Elena Fernández Morales', 'lucia.fernandez@duocuc.cl', 'Pasaje Los Aromos 567, Población Nueva', 'region-araucania', 'temuco', '923456789', '2024-06-02', 3, 8000, ''),
-(4, 'SO1004', 10, 'Juan Carlos Pérez Soto', 'juan.perez@duocuc.cl', 'Av. Providencia 2345, Depto 12', 'region-metropolitana', 'providencia', '956789012', '2024-06-03', 4, 12000, ''),
-(5, 'SO1005', 11, 'Carla Andrea López Muñoz', 'carla.lopez@duocuc.cl', 'Calle Alvares 567, Casa 23', 'region-valparaiso', 'vina-del-mar', '945678901', '2024-06-04', 1, 16800, ''),
-(6, 'SO1006', 12, 'Roberto Andrés Sánchez Vera', 'roberto.sanchez@duocuc.cl', 'Pasaje Los Pinos 890, Villa Mar', 'region-biobio', 'talcahuano', '912345678', '2024-06-05', 2, 18500, ''),
-(7, 'SO1007', 13, 'María Cristina Silva Rojas', 'maria.silva@duocuc.cl', 'Av. Manso de Velasco 1234', 'region-maule', 'curico', '967890123', '2024-06-06', 1, 16800, ''),
-(8, 'SO1008', 14, 'Diego Sebastián Morales Castro', 'diego.morales@duocuc.cl', 'Calle Walker Martinez 3456, Block A', 'region-metropolitana', 'la-florida', '923456780', '2024-06-07', 4, 28000, ''),
-(9, 'SO1009', 15, 'Valentina Isabel Rojas Hernández', 'valentina.rojas@duocuc.cl', 'Av. Libertador 789, Casa 45', 'region-ohiggins', 'san-fernando', '934567892', '2024-06-08', 3, 6000, ''),
-(10, 'SO1010', 16, 'Francisco Javier Gómez Torres', 'francisco.gomez@duocuc.cl', 'Camino Villarrica 234, Km 5', 'region-araucania', 'villarrica', '978901234', '2024-06-09', 1, 14700, ''),
-(11, 'SO1011', 17, 'Camila Fernanda Vargas Pérez', 'camila.vargas@duocuc.cl', 'Av. Irarrázaval 5678, Depto 301', 'region-metropolitana', 'nunoa', '956781235', '2024-06-10', 2, 13800, ''),
-(12, 'SO1012', 18, 'Andrés Felipe Muñoz Bravo', 'andres.munoz@duocuc.cl', 'Calle Freire 123, Villa Esperanza', 'region-valparaiso', 'quilpue', '989012345', '2024-06-11', 1, 8000, ''),
-(13, 'SO1013', 19, 'Daniela Patricia Castro Fuentes', 'daniela.castro@duocuc.cl', 'Av. Ricardo Vicuña 456', 'region-biobio', 'los-angeles', '945678903', '2024-06-12', 4, 9600, ''),
-(14, 'SO1014', 4, 'Ana María Martínez López', 'ana.martinez@duocuc.cl', 'Av. Apoquindo 4567, Casa 78', 'region-metropolitana', 'las-condes', '945678912', '2024-06-13', 1, 29800, ''),
-(15, 'SO1015', 5, 'Pedro Antonio Ramírez Castro', 'pedro.ramirez@duocuc.cl', 'Calle San Martín 1234, Villa El Sauce', 'region-ohiggins', 'rancagua', '934567891', '2024-06-14', 3, 5400, ''),
-(16, 'SO1016', 10, 'Juan Carlos Pérez Soto', 'juan.perez@duocuc.cl', 'Av. Providencia 2345, Depto 12', 'region-metropolitana', 'providencia', '956789012', '2024-06-15', 2, 21600, ''),
-(17, 'SO1017', 11, 'Carla Andrea López Muñoz', 'carla.lopez@duocuc.cl', 'Calle Alvares 567, Casa 23', 'region-valparaiso', 'vina-del-mar', '945678901', '2024-06-16', 4, 10300, ''),
-(18, 'SO1018', 12, 'Roberto Andrés Sánchez Vera', 'roberto.sanchez@duocuc.cl', 'Pasaje Los Pinos 890, Villa Mar', 'region-biobio', 'talcahuano', '912345678', '2024-06-17', 1, 15000, ''),
-(19, 'SO1019', 13, 'María Cristina Silva Rojas', 'maria.silva@duocuc.cl', 'Av. Manso de Velasco 1234', 'region-maule', 'curico', '967890123', '2024-06-18', 2, 14400, ''),
-(20, 'SO1020', 14, 'Diego Sebastián Morales Castro', 'diego.morales@duocuc.cl', 'Calle Walker Martinez 3456, Block A', 'region-metropolitana', 'la-florida', '923456780', '2024-06-19', 1, 38000, '');
+INSERT INTO `ordenes` (id, numero_orden, cliente_id, nombre_cliente_snapshot, email_cliente_snapshot, direccion_envio, region_envio, comuna_envio, telefono_contacto, fecha, estado_id, monto_total, costo_envio, comentario) VALUES
+(1, 'SO1001', 4, 'Ana María Martínez López', 'ana.martinez@duocuc.cl', 'Av. Apoquindo 4567, Casa 78', 'region-metropolitana', 'las-condes', '945678912', '2024-06-01', 1, 21300, 5000, ''),
+(2, 'SO1002', 5, 'Pedro Antonio Ramírez Castro', 'pedro.ramirez@duocuc.cl', 'Calle San Martín 1234, Villa El Sauce', 'region-ohiggins', 'rancagua', '934567891', '2024-06-02', 2, 14500, 4500, ''),
+(3, 'SO1003', 6, 'Lucía Elena Fernández Morales', 'lucia.fernandez@duocuc.cl', 'Pasaje Los Aromos 567, Población Nueva', 'region-araucania', 'temuco', '923456789', '2024-06-02', 3, 8000, 3500, ''),
+(4, 'SO1004', 10, 'Juan Carlos Pérez Soto', 'juan.perez@duocuc.cl', 'Av. Providencia 2345, Depto 12', 'region-metropolitana', 'providencia', '956789012', '2024-06-03', 4, 12000, 5500, ''),
+(5, 'SO1005', 11, 'Carla Andrea López Muñoz', 'carla.lopez@duocuc.cl', 'Calle Alvares 567, Casa 23', 'region-valparaiso', 'vina-del-mar', '945678901', '2024-06-04', 1, 16800, 6200, ''),
+(6, 'SO1006', 12, 'Roberto Andrés Sánchez Vera', 'roberto.sanchez@duocuc.cl', 'Pasaje Los Pinos 890, Villa Mar', 'region-biobio', 'talcahuano', '912345678', '2024-06-05', 2, 18500, 4800, ''),
+(7, 'SO1007', 13, 'María Cristina Silva Rojas', 'maria.silva@duocuc.cl', 'Av. Manso de Velasco 1234', 'region-maule', 'curico', '967890123', '2024-06-06', 1, 16800, 5300, ''),
+(8, 'SO1008', 14, 'Diego Sebastián Morales Castro', 'diego.morales@duocuc.cl', 'Calle Walker Martinez 3456, Block A', 'region-metropolitana', 'la-florida', '923456780', '2024-06-07', 4, 28000, 6500, ''),
+(9, 'SO1009', 15, 'Valentina Isabel Rojas Hernández', 'valentina.rojas@duocuc.cl', 'Av. Libertador 789, Casa 45', 'region-ohiggins', 'san-fernando', '934567892', '2024-06-08', 3, 6000, 3000, ''),
+(10, 'SO1010', 16, 'Francisco Javier Gómez Torres', 'francisco.gomez@duocuc.cl', 'Camino Villarrica 234, Km 5', 'region-araucania', 'villarrica', '978901234', '2024-06-09', 1, 14700, 4200, ''),
+(11, 'SO1011', 17, 'Camila Fernanda Vargas Pérez', 'camila.vargas@duocuc.cl', 'Av. Irarrázaval 5678, Depto 301', 'region-metropolitana', 'nunoa', '956781235', '2024-06-10', 2, 13800, 5700, ''),
+(12, 'SO1012', 18, 'Andrés Felipe Muñoz Bravo', 'andres.munoz@duocuc.cl', 'Calle Freire 123, Villa Esperanza', 'region-valparaiso', 'quilpue', '989012345', '2024-06-11', 1, 8000, 3800, ''),
+(13, 'SO1013', 19, 'Daniela Patricia Castro Fuentes', 'daniela.castro@duocuc.cl', 'Av. Ricardo Vicuña 456', 'region-biobio', 'los-angeles', '945678903', '2024-06-12', 4, 9600, 4100, ''),
+(14, 'SO1014', 4, 'Ana María Martínez López', 'ana.martinez@duocuc.cl', 'Av. Apoquindo 4567, Casa 78', 'region-metropolitana', 'las-condes', '945678912', '2024-06-13', 1, 29800, 6800, ''),
+(15, 'SO1015', 5, 'Pedro Antonio Ramírez Castro', 'pedro.ramirez@duocuc.cl', 'Calle San Martín 1234, Villa El Sauce', 'region-ohiggins', 'rancagua', '934567891', '2024-06-14', 3, 5400, 3200, ''),
+(16, 'SO1016', 10, 'Juan Carlos Pérez Soto', 'juan.perez@duocuc.cl', 'Av. Providencia 2345, Depto 12', 'region-metropolitana', 'providencia', '956789012', '2024-06-15', 2, 21600, 5900, ''),
+(17, 'SO1017', 11, 'Carla Andrea López Muñoz', 'carla.lopez@duocuc.cl', 'Calle Alvares 567, Casa 23', 'region-valparaiso', 'vina-del-mar', '945678901', '2024-06-16', 4, 10300, 4600, ''),
+(18, 'SO1018', 12, 'Roberto Andrés Sánchez Vera', 'roberto.sanchez@duocuc.cl', 'Pasaje Los Pinos 890, Villa Mar', 'region-biobio', 'talcahuano', '912345678', '2024-06-17', 1, 15000, 5100, ''),
+(19, 'SO1019', 13, 'María Cristina Silva Rojas', 'maria.silva@duocuc.cl', 'Av. Manso de Velasco 1234', 'region-maule', 'curico', '967890123', '2024-06-18', 2, 14400, 4900, ''),
+(20, 'SO1020', 14, 'Diego Sebastián Morales Castro', 'diego.morales@duocuc.cl', 'Calle Walker Martinez 3456, Block A', 'region-metropolitana', 'la-florida', '923456780', '2024-06-19', 1, 38000, 7000, '');
 
 -- Insertar Detalles (CORREGIDO CON SNAPSHOTS DE PRODUCTOS)
 -- Nota: Se han extraído los nombres y precios históricos de la tabla de productos.

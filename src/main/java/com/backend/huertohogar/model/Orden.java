@@ -21,6 +21,9 @@ public class Orden {
     @Column(name = "monto_total", nullable = false)
     private Integer montoTotal;
 
+    @Column(name = "costo_envio", nullable = false)
+    private Integer costoEnvio;
+
     @Column(name = "comentario", columnDefinition = "TEXT")
     private String comentario;
 
@@ -88,6 +91,14 @@ public class Orden {
 
     public void setMontoTotal(Integer montoTotal) {
         this.montoTotal = montoTotal;
+    }
+
+    public Integer getCostoEnvio() {
+        return costoEnvio;
+    }
+
+    public void setCostoEnvio(Integer costoEnvio) {
+        this.costoEnvio = costoEnvio;
     }
 
     public String getComentario() {
