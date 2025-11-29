@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,6 +42,7 @@ public class ProductoController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     public ResponseEntity<ProductoResponseDTO> createProducto(@Valid @RequestBody ProductoRequestDTO productoDTO) {
         ProductoResponseDTO newProductoResponse = productoService.saveProducto(productoDTO);
         return new ResponseEntity<>(newProductoResponse, HttpStatus.CREATED);
@@ -48,6 +50,7 @@ public class ProductoController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     public ResponseEntity<ProductoResponseDTO> updateProducto(@PathVariable Integer id,
             @Valid @RequestBody ProductoRequestDTO productoDTO) {
         ProductoResponseDTO updatedProductoResponse = productoService.updateProducto(id, productoDTO);
@@ -56,6 +59,7 @@ public class ProductoController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     public ResponseEntity<Void> deleteProducto(@PathVariable Integer id) {
         productoService.deleteProducto(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

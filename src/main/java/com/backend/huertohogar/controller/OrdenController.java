@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,12 +26,14 @@ public class OrdenController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     public ResponseEntity<List<OrdenResponseDTO>> getAllOrdenes() {
         List<OrdenResponseDTO> ordenes = ordenService.getAllOrdenes();
         return new ResponseEntity<>(ordenes, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR', 'CLIENTE')")
     public ResponseEntity<OrdenResponseDTO> getOrdenById(@PathVariable Integer id) {
         return ordenService.getOrdenById(id)
                 .map(orden -> new ResponseEntity<>(orden, HttpStatus.OK))
@@ -38,12 +41,14 @@ public class OrdenController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('CLIENTE')")
     public ResponseEntity<OrdenResponseDTO> createOrden(@Valid @RequestBody OrdenRequestDTO ordenDTO) {
         OrdenResponseDTO newOrden = ordenService.createOrden(ordenDTO);
         return new ResponseEntity<>(newOrden, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     public ResponseEntity<OrdenResponseDTO> updateOrden(@PathVariable Integer id,
             @Valid @RequestBody OrdenRequestDTO ordenDTO) {
         OrdenResponseDTO updatedOrden = ordenService.updateOrden(id, ordenDTO);
@@ -51,6 +56,7 @@ public class OrdenController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
     public ResponseEntity<Void> deleteOrden(@PathVariable Integer id) {
         ordenService.deleteOrden(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
