@@ -1,5 +1,6 @@
 package com.backend.huertohogar.controller;
 
+import com.backend.huertohogar.dto.CostoEnvioDTO;
 import com.backend.huertohogar.dto.OrdenRequestDTO;
 import com.backend.huertohogar.dto.OrdenResponseDTO;
 import com.backend.huertohogar.service.OrdenService;
@@ -53,5 +54,13 @@ public class OrdenController {
     public ResponseEntity<Void> deleteOrden(@PathVariable Integer id) {
         ordenService.deleteOrden(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping("/calcular-envio")
+    public ResponseEntity<CostoEnvioDTO> calcularCostoEnvio(
+            @RequestParam(required = false) String region,
+            @RequestParam(required = false) String comuna) {
+        int costoEnvio = ordenService.calcularCostoEnvio(region, comuna);
+        return new ResponseEntity<>(new CostoEnvioDTO(costoEnvio), HttpStatus.OK);
     }
 }

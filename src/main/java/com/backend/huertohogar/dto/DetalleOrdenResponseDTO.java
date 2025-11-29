@@ -4,25 +4,47 @@ import com.backend.huertohogar.model.DetalleOrden;
 
 public class DetalleOrdenResponseDTO {
 
-    private String productoNombre;
+    private Integer id;
+    private String nombreProductoSnapshot;
+    private Integer precioUnitarioSnapshot;
     private Integer cantidad;
-    private Integer precioUnitario;
     private Integer subtotal;
+    private String imagen;
 
     public DetalleOrdenResponseDTO(DetalleOrden detalle) {
-        // Use snapshot fields
-        this.productoNombre = detalle.getNombreProductoSnapshot();
-        this.precioUnitario = detalle.getPrecioUnitarioSnapshot();
+        this.id = detalle.getId();
+        this.nombreProductoSnapshot = detalle.getNombreProductoSnapshot();
+        this.precioUnitarioSnapshot = detalle.getPrecioUnitarioSnapshot();
         this.cantidad = detalle.getCantidad();
         this.subtotal = detalle.getSubtotal();
+        // Extraer imagen del producto si existe
+        if (detalle.getProducto() != null) {
+            this.imagen = detalle.getProducto().getImagen();
+        }
     }
 
-    public String getProductoNombre() {
-        return productoNombre;
+    public Integer getId() {
+        return id;
     }
 
-    public void setProductoNombre(String productoNombre) {
-        this.productoNombre = productoNombre;
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getNombreProductoSnapshot() {
+        return nombreProductoSnapshot;
+    }
+
+    public void setNombreProductoSnapshot(String nombreProductoSnapshot) {
+        this.nombreProductoSnapshot = nombreProductoSnapshot;
+    }
+
+    public Integer getPrecioUnitarioSnapshot() {
+        return precioUnitarioSnapshot;
+    }
+
+    public void setPrecioUnitarioSnapshot(Integer precioUnitarioSnapshot) {
+        this.precioUnitarioSnapshot = precioUnitarioSnapshot;
     }
 
     public Integer getCantidad() {
@@ -33,19 +55,19 @@ public class DetalleOrdenResponseDTO {
         this.cantidad = cantidad;
     }
 
-    public Integer getPrecioUnitario() {
-        return precioUnitario;
-    }
-
-    public void setPrecioUnitario(Integer precioUnitario) {
-        this.precioUnitario = precioUnitario;
-    }
-
     public Integer getSubtotal() {
         return subtotal;
     }
 
     public void setSubtotal(Integer subtotal) {
         this.subtotal = subtotal;
+    }
+
+    public String getImagen() {
+        return imagen;
+    }
+
+    public void setImagen(String imagen) {
+        this.imagen = imagen;
     }
 }

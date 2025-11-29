@@ -15,4 +15,6 @@ public interface OrdenService {
     OrdenResponseDTO updateOrden(Integer id, OrdenRequestDTO ordenDTO);
 
     void deleteOrden(Integer id);
+
+    int calcularCostoEnvio(String region, String comuna);
 }

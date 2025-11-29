@@ -13,11 +13,15 @@ public class Categoria {
     @Column(nullable = false, unique = true, length = 100)
     private String nombre;
 
+    @Column(nullable = false, unique = true, length = 10)
+    private String prefijo;
+
     public Categoria() {
     }
 
-    public Categoria(String nombre) {
+    public Categoria(String nombre, String prefijo) {
         this.nombre = nombre;
+        this.prefijo = prefijo;
     }
 
     public Integer getId() {
@@ -34,5 +38,13 @@ public class Categoria {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public String getPrefijo() {
+        return prefijo;
+    }
+
+    public void setPrefijo(String prefijo) {
+        this.prefijo = prefijo;
     }
 }

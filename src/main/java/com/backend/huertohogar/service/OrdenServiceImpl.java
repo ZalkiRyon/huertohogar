@@ -61,17 +61,15 @@ public class OrdenServiceImpl implements OrdenService {
 
         // 2. Crear Orden
         Orden orden = new Orden();
-        orden.setNumeroOrden(UUID.randomUUID().toString()); // Generar número único
+        // Generar número de orden consecutivo basado en el último registro
+        String numeroOrden = generarNumeroOrden();
+        orden.setNumeroOrden(numeroOrden);
+
         orden.setFecha(LocalDate.now());
         orden.setComentario(ordenDTO.getComentario());
         orden.setUsuario(cliente);
 
-        // 3. Asignar Estado Inicial (Pendiente)
-        Estado estadoPendiente = estadoRepository.findById(2) // Asumiendo ID 2 es Pendiente
-                .orElseThrow(() -> new ResourceNotFoundException("Estado 'Pendiente' no encontrado"));
-        orden.setEstado(estadoPendiente);
-
-        // 4. Snapshot de Datos del Cliente
+        // 3. Snapshot de Datos del Cliente
         orden.setNombreClienteSnapshot(cliente.getNombre() + " " + cliente.getApellido());
         orden.setEmailClienteSnapshot(cliente.getEmail());
         orden.setDireccionEnvio(cliente.getDireccion());
@@ -79,23 +77,51 @@ public class OrdenServiceImpl implements OrdenService {
         orden.setComunaEnvio(cliente.getComuna());
         orden.setTelefonoContacto(cliente.getTelefono());
 
-        // 5. Procesar Detalles y Calcular Totales
+        // 4. Procesar Detalles y Calcular Totales
         List<DetalleOrden> detalles = new ArrayList<>();
         int montoTotal = 0;
+        boolean stockInsuficiente = false;
 
+        // Verificar stock primero
         for (DetalleOrdenRequestDTO detalleDTO : ordenDTO.getDetalles()) {
             Producto producto = productoRepository.findById(detalleDTO.getProductoId())
                     .orElseThrow(() -> new ResourceNotFoundException(
                             "Producto no encontrado con ID: " + detalleDTO.getProductoId()));
 
-            // Validar Stock
             if (producto.getStock() < detalleDTO.getCantidad()) {
-                throw new ValidationException("Stock insuficiente para el producto: " + producto.getNombre());
+                stockInsuficiente = true;
             }
+        }
 
-            // Descontar Stock
-            producto.setStock(producto.getStock() - detalleDTO.getCantidad());
-            productoRepository.save(producto);
+        // 5. Asignar Estado
+        java.util.Random random = new java.util.Random();
+        Estado estadoOrden;
+        if (stockInsuficiente) {
+            // Buscar estado "Cancelado" (ID 3)
+            estadoOrden = estadoRepository.findById(3)
+                    .orElseThrow(() -> new ResourceNotFoundException("Estado 'Cancelado' no encontrado."));
+        } else {
+            // Asignar estado aleatorio entre Enviado (1), Pendiente (2), Procesando (4)
+            // Excluyendo Cancelado (3)
+            int[] estadosValidos = { 1, 2, 4 };
+            int randomEstadoId = estadosValidos[random.nextInt(estadosValidos.length)];
+            estadoOrden = estadoRepository.findById(randomEstadoId)
+                    .orElseThrow(
+                            () -> new ResourceNotFoundException("Estado con ID " + randomEstadoId + " no encontrado"));
+        }
+        orden.setEstado(estadoOrden);
+
+        // 6. Crear detalles y actualizar stock (solo si no es fallida)
+        for (DetalleOrdenRequestDTO detalleDTO : ordenDTO.getDetalles()) {
+            Producto producto = productoRepository.findById(detalleDTO.getProductoId())
+                    .orElseThrow(() -> new ResourceNotFoundException(
+                            "Producto no encontrado con ID: " + detalleDTO.getProductoId()));
+
+            // Descontar Stock solo si la orden NO es fallida
+            if (!stockInsuficiente) {
+                producto.setStock(producto.getStock() - detalleDTO.getCantidad());
+                productoRepository.save(producto);
+            }
 
             // Crear Detalle
             DetalleOrden detalle = new DetalleOrden();
@@ -116,14 +142,49 @@ public class OrdenServiceImpl implements OrdenService {
         }
 
         orden.setDetalles(detalles);
-        orden.setMontoTotal(montoTotal);
+        
+        // 7. Costo de envío aleatorio
+        int costoEnvio = generarCostoEnvioAleatorio();
+        orden.setCostoEnvio(costoEnvio);
+        
+        // 8. Calcular monto total = subtotal productos + costo envío
+        orden.setMontoTotal(montoTotal + costoEnvio);
 
-        // Costo de envío fijo por ahora (o lógica personalizada)
-        orden.setCostoEnvio(0);
-
-        // 6. Guardar Orden
+        // 9. Guardar Orden
         Orden savedOrden = ordenRepository.save(orden);
         return new OrdenResponseDTO(savedOrden);
+    }
+
+    private String generarNumeroOrden() {
+        // Obtener el último número de orden
+        List<Orden> ordenes = ordenRepository.findAll();
+        int ultimoNumero = 1020; // Número inicial basado en tus datos de prueba
+        
+        for (Orden o : ordenes) {
+            String numOrden = o.getNumeroOrden();
+            if (numOrden != null && numOrden.startsWith("SO")) {
+                try {
+                    // Extraer el número después de "SO"
+                    String numeroStr = numOrden.replace("SO", "").replace("-", "");
+                    int numero = Integer.parseInt(numeroStr);
+                    if (numero > ultimoNumero) {
+                        ultimoNumero = numero;
+                    }
+                } catch (NumberFormatException e) {
+                    // Ignorar formatos inválidos
+                }
+            }
+        }
+        
+        // Generar el siguiente número
+        return "SO" + (ultimoNumero + 1);
+    }
+
+    private int generarCostoEnvioAleatorio() {
+        java.util.Random random = new java.util.Random();
+        int min = 3000;
+        int max = 7000;
+        return random.nextInt(max - min + 1) + min;
     }
 
     @Override
@@ -156,5 +217,12 @@ public class OrdenServiceImpl implements OrdenService {
         }
 
         ordenRepository.delete(orden);
+    }
+
+    @Override
+    public int calcularCostoEnvio(String region, String comuna) {
+        // Genera un costo de envío aleatorio entre 3000 y 7000
+        // Puedes personalizar esta lógica según la región/comuna si lo deseas
+        return generarCostoEnvioAleatorio();
     }
 }

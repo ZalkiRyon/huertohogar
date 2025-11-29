@@ -22,13 +22,15 @@ CREATE TABLE `roles` (
   UNIQUE KEY `nombre_unique` (`nombre`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Tabla de Categorías
+-- Tabla de Categorías de Productos
 DROP TABLE IF EXISTS `categorias`;
 CREATE TABLE `categorias` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nombre` varchar(100) NOT NULL,
+  `prefijo` varchar(10) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `nombre_unique` (`nombre`)
+  UNIQUE KEY `nombre_unique` (`nombre`),
+  UNIQUE KEY `prefijo_unique` (`prefijo`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Tabla de Estados de Orden
@@ -155,8 +157,11 @@ INSERT INTO `roles` (`id`, `nombre`) VALUES
 (1, 'admin'), (2, 'cliente'), (3, 'vendedor');
 
 -- Insertar Categorías
-INSERT INTO `categorias` (`id`, `nombre`) VALUES
-(1, 'Frutas frescas'), (2, 'Verduras organicas'), (3, 'Productos organicos'), (4, 'Productos lacteos');
+INSERT INTO `categorias` (`id`, `nombre`, `prefijo`) VALUES
+(1, 'Frutas frescas', 'FR'), 
+(2, 'Verduras organicas', 'VR'), 
+(3, 'Productos organicos', 'PO'), 
+(4, 'Productos lacteos', 'PL');
 
 -- Insertar Estados
 INSERT INTO `estados` (`id`, `nombre`) VALUES
