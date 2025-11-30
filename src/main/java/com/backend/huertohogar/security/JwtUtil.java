@@ -2,16 +2,18 @@ package com.backend.huertohogar.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
@@ -58,9 +60,12 @@ public class JwtUtil {
     }
 
     // Generar token para un usuario
-    public String generateToken(UserDetails userDetails, String role, Integer userId) {
+    public String generateToken(UserDetails userDetails, Integer userId) {
         Map<String, Object> claims = new HashMap<>();
-        claims.put("role", role);
+
+        claims.put("authorities", userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toList()));
         claims.put("userId", userId);
         return createToken(claims, userDetails.getUsername());
     }
@@ -84,7 +89,9 @@ public class JwtUtil {
 
     // Extraer el rol del token
     public String extractRole(String token) {
-        return extractClaim(token, claims -> claims.get("role", String.class));
+        List<String> authorities = extractClaim(token, claims -> claims.get("authorities", List.class));
+
+        return authorities != null && !authorities.isEmpty() ? authorities.get(0) : null;
     }
 
     // Extraer el userId del token

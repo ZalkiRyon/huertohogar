@@ -46,8 +46,7 @@ public class AuthController {
 
             // Generar token JWT
             final String jwt = jwtUtil.generateToken(
-                    userDetails, 
-                    user.getRol().getNombre(), 
+                    userDetails,
                     user.getId()
             );
 

@@ -2,6 +2,7 @@ package com.backend.huertohogar.config;
 
 import com.backend.huertohogar.security.CustomUserDetailsService;
 import com.backend.huertohogar.security.JwtAuthenticationFilter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
 
@@ -33,6 +35,23 @@ public class SecurityConfig {
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Bean
+    public CorsFilter corsFilter() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+
+        // Permite credenciales (necesario para JWT)
+        config.setAllowCredentials(true);
+
+
+        config.addAllowedOrigin("http://localhost:3000"); // Asegúrate que este sea el puerto de tu React
+        config.addAllowedHeader("*"); // Permite todos los headers (incluyendo Authorization)
+        config.addAllowedMethod("*"); // Permite todos los métodos (GET, POST, etc.)
+
+        source.registerCorsConfiguration("/**", config);
+        return new CorsFilter(source);
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
