@@ -52,6 +52,16 @@ public class UserServiceImpl implements UserService {
         String email = userDto.getEmail();
         String password = userDto.getPassword();
 
+        // Validar formato del email (debe terminar en @duocuc.cl o @profesor.duoc.cl)
+        if (email == null || email.trim().isEmpty()) {
+            throw new IllegalArgumentException("El email es obligatorio y no puede estar vacío.");
+        }
+        email = email.trim().toLowerCase();
+        boolean isValidDomain = email.endsWith("@duocuc.cl") || email.endsWith("@profesor.duoc.cl");
+        if (!isValidDomain) {
+            throw new IllegalArgumentException("El email debe terminar en @duocuc.cl o @profesor.duoc.cl");
+        }
+
         if (userDto.getNombre() == null || userDto.getNombre().trim().isEmpty()) {
             throw new IllegalArgumentException("El Nombre es obligatorio y no puede estar vacío.");
         }
