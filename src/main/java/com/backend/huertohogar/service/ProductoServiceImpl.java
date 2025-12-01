@@ -162,14 +162,21 @@ public class ProductoServiceImpl implements ProductoService {
             codigoExistente = nombreExistente.substring(0, nombreExistente.indexOf(" - "));
         }
 
+        // Limpiar el nombre recibido del frontend, removiendo cualquier prefijo si existe
+        String nombreLimpio = productoDTO.getNombre();
+        if (nombreLimpio.contains(" - ")) {
+            // Si el nombre tiene formato "PREFIJO### - Nombre", extraer solo el nombre
+            nombreLimpio = nombreLimpio.substring(nombreLimpio.indexOf(" - ") + 3);
+        }
+
         // Si la categoría cambió, generar nuevo código
         String nombreCompleto;
         if (!existingProducto.getCategoria().getId().equals(categoria.getId())) {
             String nuevoCodigo = generarCodigoProducto(categoria);
-            nombreCompleto = nuevoCodigo + " - " + productoDTO.getNombre();
+            nombreCompleto = nuevoCodigo + " - " + nombreLimpio;
         } else {
             // Mantener el código existente si la categoría no cambió
-            nombreCompleto = codigoExistente + " - " + productoDTO.getNombre();
+            nombreCompleto = codigoExistente + " - " + nombreLimpio;
         }
 
         // Validación de duplicados (excluyendo el actual)
