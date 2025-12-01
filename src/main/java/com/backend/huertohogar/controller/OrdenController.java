@@ -48,7 +48,7 @@ public class OrdenController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<OrdenResponseDTO> updateOrden(@PathVariable Integer id,
             @Valid @RequestBody OrdenRequestDTO ordenDTO) {
         OrdenResponseDTO updatedOrden = ordenService.updateOrden(id, ordenDTO);
@@ -56,7 +56,7 @@ public class OrdenController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> deleteOrden(@PathVariable Integer id) {
         ordenService.deleteOrden(id);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

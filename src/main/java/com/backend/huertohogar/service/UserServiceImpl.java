@@ -155,20 +155,28 @@ public class UserServiceImpl implements UserService {
         if (newEmail == null || newEmail.trim().isEmpty()) {
             throw new ValidationException("El Email es obligatorio.");
         }
+        
+        // Normalizar email a minúsculas para comparación consistente
+        newEmail = newEmail.trim().toLowerCase();
+        
         if (!(newEmail.endsWith("@duocuc.cl") || newEmail.endsWith("@profesor.duoc.cl"))) {
             throw new IllegalArgumentException(
                     "El formato de email no es válido. Debe terminar en @duocuc.cl o @profesor.duoc.cl.");
         }
 
-        if (!newEmail.equals(existingUser.getEmail())) {
-            if (userRepository.findByEmail(newEmail) != null) {
+        // Validar que el email no esté en uso por otro usuario (comparación case-insensitive)
+        if (!newEmail.equalsIgnoreCase(existingUser.getEmail())) {
+            User userWithEmail = userRepository.findByEmail(newEmail);
+            if (userWithEmail != null && !userWithEmail.getId().equals(id)) {
                 throw new IllegalArgumentException(
                         "El email '" + newEmail + "' ya se encuentra registrado por otro usuario.");
             }
         }
 
-        if (!userDto.getRun().equals(existingUser.getRun())) {
-            if (userRepository.findByRun(userDto.getRun()) != null) {
+        // Validar que el RUN no esté en uso por otro usuario
+        if (!userDto.getRun().equalsIgnoreCase(existingUser.getRun())) {
+            User userWithRun = userRepository.findByRun(userDto.getRun());
+            if (userWithRun != null && !userWithRun.getId().equals(id)) {
                 throw new IllegalArgumentException(
                         "El run '" + userDto.getRun() + "' ya se encuentra registrado por otro usuario.");
             }
